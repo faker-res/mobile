@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+ async getTrend() {
+      try {
+        let res = await this.$api.home.getTrend({
+          year: this.year
+        });
+        if (res && res.code == 200) {
+          this.trendData = res.body;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+      cratedMescroll() {
+      this.meScroll = new MeScroll("scroll", {
+        down: {
+          callback: this.downCallback //下拉刷新的回调,别写成downCallback(),多了括号就自动执行方法了
+        }
+      });
+    },
+    async downCallback() {
+      try {
+        let res = await this.$api.home.getSxCount({
+          year: this.year
+        });
+        if (res && res.code == 200) {
+          let trendData = res.body;
+          trendData.froEach((item,i)=>{
+            
+          })
+          this.meScroll.endSuccess();
+        } else {
+          this.meScroll.endErr();
+        }
+      } catch (err) {}
+    }
+
+
+    async getSxCoun() {
+      try {
+        let res = await this.$api.home.getSxCount({
+          year: this.year
+        });
+        if (res && res.code == 200) {
+          this.navList.forEach(navItem => {
+            if (navItem.text == "生肖走势") {
+              navItem.Data.key = Object.keys(res.body);
+              navItem.Data.value = Object.values(res.body);
+              navItem.Data.spaceVal = 2;
+            }
+          });
+        }
+        console.log(this.navList);
+      } catch (err) {
+        console.log(err);
+      }
+    },
+</script>
+</html>
